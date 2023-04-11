@@ -4,7 +4,8 @@ import winreg
 class RegeditChange:
 
     def __init__(self, color1, color2):
-        self.color1, self.color2 = color1, color2
+        self.color1, self.color2 = color1.replace(',',
+                                                  ''), color2.replace(',', '')
 
     def check_color(self, color):
         components = color.split()
