@@ -1,7 +1,7 @@
 import customtkinter
 from change_selection_color import RegeditChange
 
-# reg_change = RegeditChange()
+regedit_change = RegeditChange()
 
 
 class Switches(customtkinter.CTkFrame):
@@ -37,10 +37,7 @@ class AcceptButton(customtkinter.CTkFrame):
         super().__init__(master)
 
         self.button = customtkinter.CTkButton(
-            self,
-            # command=reg_change.accept_color(),
-            command=...,
-            text="Применить")
+            self, command=regedit_change.accept_color, text="Применить")
         self.button.grid(row=0, column=0, padx=0, pady=0)
 
 
@@ -49,165 +46,69 @@ class RGBSliders(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
         self.sliders_frame = customtkinter.CTkFrame(self)
-        self.sliders_frame.grid(
-            row=0,
-            column=0,
-            padx=10,
-            pady=(10, 10),
-        )
+        self.sliders_frame.grid(row=0, column=0, padx=10, pady=(10, 10))
 
+        self.slider_entries = [
+            (customtkinter.CTkSlider, customtkinter.CTkEntry, "_R"),
+            (customtkinter.CTkSlider, customtkinter.CTkEntry, "_G"),
+            (customtkinter.CTkSlider, customtkinter.CTkEntry, "_B"),
+            (customtkinter.CTkSlider, customtkinter.CTkEntry, "R"),
+            (customtkinter.CTkSlider, customtkinter.CTkEntry, "G"),
+            (customtkinter.CTkSlider, customtkinter.CTkEntry, "B"),
+        ]
         self.first_label = customtkinter.CTkLabel(self.sliders_frame,
                                                   text="Контур выделения")
         self.first_label.grid(row=0, column=0)
-
-        self.slider_R = customtkinter.CTkSlider(
-            self.sliders_frame,
-            from_=0,
-            to=255,
-            command=lambda value: self.slider_event(value, self.entry_R),
-            number_of_steps=255)
-        self.slider_R.grid(row=1, column=0, padx=20, pady=(10, 10))
-
-        self.entry_R = customtkinter.CTkEntry(self.sliders_frame,
-                                              placeholder_text="R",
-                                              width=50,
-                                              validate="key",
-                                              validatecommand=(self.register(
-                                                  self.validate_entry), "%P"))
-        self.entry_R.insert(0, int(self.slider_R.get()))
-        self.entry_R.bind(
-            "<Return>",
-            lambda event: self.entry_event(self.entry_R, self.slider_R))
-        self.entry_R.grid(row=1, column=1, padx=5, pady=0)
-
-        self.slider_G = customtkinter.CTkSlider(
-            self.sliders_frame,
-            from_=0,
-            to=255,
-            command=lambda value: self.slider_event(value, self.entry_G),
-            number_of_steps=255)
-        self.slider_G.grid(row=2, column=0, padx=20, pady=(10, 10))
-
-        self.entry_G = customtkinter.CTkEntry(self.sliders_frame,
-                                              placeholder_text="G",
-                                              width=50,
-                                              validate="key",
-                                              validatecommand=(self.register(
-                                                  self.validate_entry), "%P"))
-        self.entry_G.insert(0, int(self.slider_G.get()))
-        self.entry_G.bind(
-            "<Return>",
-            lambda event: self.entry_event(self.entry_G, self.slider_G))
-        self.entry_G.grid(row=2, column=1, padx=5, pady=0)
-
-        self.slider_B = customtkinter.CTkSlider(
-            self.sliders_frame,
-            from_=0,
-            to=255,
-            command=lambda value: self.slider_event(value, self.entry_B),
-            number_of_steps=255)
-        self.slider_B.grid(row=3, column=0, padx=20, pady=(10, 10))
-
-        self.entry_B = customtkinter.CTkEntry(self.sliders_frame,
-                                              placeholder_text="B",
-                                              width=50,
-                                              validate="key",
-                                              validatecommand=(self.register(
-                                                  self.validate_entry), "%P"))
-        self.entry_B.insert(0, int(self.slider_B.get()))
-        self.entry_B.bind(
-            "<Return>",
-            lambda event: self.entry_event(self.entry_B, self.slider_B))
-        self.entry_B.grid(row=3, column=1, padx=5, pady=0)
-
         self.second_label = customtkinter.CTkLabel(self.sliders_frame,
                                                    text="Заливка выделения")
         self.second_label.grid(row=4, column=0)
+        for row, (slider_cls, entry_cls,
+                  text) in enumerate(self.slider_entries, start=1):
+            if row >= 4:
+                row += 1
+            entry_var = customtkinter.Variable()
+            slider = slider_cls(self.sliders_frame,
+                                from_=0,
+                                to=255,
+                                command=self.create_slider_event(entry_var),
+                                number_of_steps=255)
+            slider.grid(row=row, column=0, padx=20, pady=(10, 10))
+            entry = entry_cls(self.sliders_frame,
+                              placeholder_text=text,
+                              width=50,
+                              textvariable=entry_var,
+                              validate="key",
+                              validatecommand=(self.register(
+                                  self.validate_entry), "%P"))
+            entry.insert(0, int(slider.get()))
+            entry.bind("<Return>", self.create_entry_event(entry_var, slider))
+            entry.grid(row=row, column=1, padx=5, pady=0)
 
-        self.slider_R_HotTrackingColor = customtkinter.CTkSlider(
-            self.sliders_frame,
-            from_=0,
-            to=255,
-            command=lambda value: self.slider_event(
-                value, self.entry_R_HotTrackingColor),
-            number_of_steps=255)
-        self.slider_R_HotTrackingColor.grid(row=5,
-                                            column=0,
-                                            padx=20,
-                                            pady=(10, 10))
+            setattr(self, f"slider_{text}", slider)
+            setattr(self, f"entry_{text}", entry)
 
-        self.entry_R_HotTrackingColor = customtkinter.CTkEntry(
-            self.sliders_frame,
-            placeholder_text="R",
-            width=50,
-            validate="key",
-            validatecommand=(self.register(self.validate_entry), "%P"))
-        self.entry_R_HotTrackingColor.insert(
-            0, int(self.slider_R_HotTrackingColor.get()))
-        self.entry_R_HotTrackingColor.bind(
-            "<Return>", lambda event: self.entry_event(
-                self.entry_R_HotTrackingColor, self.slider_R_HotTrackingColor))
-        self.entry_R_HotTrackingColor.grid(row=5, column=1, padx=5, pady=0)
+    def create_slider_event(self, entry_var):
 
-        self.slider_G_HotTrackingColor = customtkinter.CTkSlider(
-            self.sliders_frame,
-            from_=0,
-            to=255,
-            command=lambda value: self.slider_event(
-                value, self.entry_G_HotTrackingColor),
-            number_of_steps=255)
-        self.slider_G_HotTrackingColor.grid(row=6,
-                                            column=0,
-                                            padx=20,
-                                            pady=(10, 10))
+        def slider_event(value):
+            entry_var.set(int(value))
+            color1 = self.get_slider_values()[:3]
+            color2 = self.get_slider_values()[3:]
+            regedit_change.insert(color1, color2)
 
-        self.entry_G_HotTrackingColor = customtkinter.CTkEntry(
-            self.sliders_frame,
-            placeholder_text="G",
-            width=50,
-            validate="key",
-            validatecommand=(self.register(self.validate_entry), "%P"))
-        self.entry_G_HotTrackingColor.insert(
-            0, int(self.slider_G_HotTrackingColor.get()))
-        self.entry_G_HotTrackingColor.bind(
-            "<Return>", lambda event: self.entry_event(
-                self.entry_G_HotTrackingColor, self.slider_G_HotTrackingColor))
-        self.entry_G_HotTrackingColor.grid(row=6, column=1, padx=5, pady=0)
+        return slider_event
 
-        self.slider_B_HotTrackingColor = customtkinter.CTkSlider(
-            self.sliders_frame,
-            from_=0,
-            to=255,
-            command=lambda value: self.slider_event(
-                value, self.entry_B_HotTrackingColor),
-            number_of_steps=255)
-        self.slider_B_HotTrackingColor.grid(row=7,
-                                            column=0,
-                                            padx=20,
-                                            pady=(10, 10))
+    def create_entry_event(self, entry_var, slider):
 
-        self.entry_B_HotTrackingColor = customtkinter.CTkEntry(
-            self.sliders_frame,
-            placeholder_text="B",
-            width=50,
-            validate="key",
-            validatecommand=(self.register(self.validate_entry), "%P"))
-        self.entry_B_HotTrackingColor.insert(
-            0, int(self.slider_B_HotTrackingColor.get()))
-        self.entry_B_HotTrackingColor.bind(
-            "<Return>", lambda event: self.entry_event(
-                self.entry_B_HotTrackingColor, self.slider_B_HotTrackingColor))
-        self.entry_B_HotTrackingColor.grid(row=7, column=1, padx=5, pady=0)
+        def entry_event(event):
+            value = entry_var.get()
+            if value == '':
+                value = 0
+            slider.set(int(value))
+            color1 = self.get_slider_values()[:3]
+            color2 = self.get_slider_values()[3:]
+            regedit_change.insert(color1, color2)
 
-    @staticmethod
-    def slider_event(value, entry):
-        entry.delete(0, customtkinter.END)
-        entry.insert(0, int(value))
-
-    @staticmethod
-    def entry_event(entry, slider):
-        value = entry.get()
-        slider.set(float(value))
+        return entry_event
 
     @staticmethod
     def validate_entry(value):
@@ -218,6 +119,14 @@ class RGBSliders(customtkinter.CTkFrame):
             return 0 <= int_value <= 255
         except ValueError:
             return False
+
+    def get_slider_values(self):
+        slider_values = []
+        for slider_entry in self.slider_entries:
+            slider = getattr(self, f"slider_{slider_entry[2]}")
+            value = int(slider.get())
+            slider_values.append(str(value))
+        return slider_values
 
 
 class App(customtkinter.CTk):
