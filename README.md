@@ -58,4 +58,4 @@ This application modifies the Windows registry to change the color of the select
 
 ## Contact
 
-If you have any questions or inquiries, please contact [to me](HazDoo@outlook.com).
+If you have any questions or inquiries, please contact [to me](https://github.com/Hazardooo).
