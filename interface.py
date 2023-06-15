@@ -43,13 +43,17 @@ class AnyFuncFrame(customtkinter.CTkFrame):
             onvalue="on",
             offvalue="off")
         self.dark_mode_switcher.grid(row=0, column=0, padx=10, pady=(5, 5))
-        self.outline_frame = customtkinter.CTkFrame(self.right_frame,
-                                                    width=70,
-                                                    height=70)
+        self.outline_frame = customtkinter.CTkFrame(
+            self.right_frame,
+            width=60,
+            height=60,
+            fg_color=regedit_change.hex_color1)
         self.outline_frame.grid(row=1, column=0, padx=10, pady=(0, 10))
-        self.fill_frame = customtkinter.CTkFrame(self.outline_frame,
-                                                 width=60,
-                                                 height=60)
+        self.fill_frame = customtkinter.CTkFrame(
+            self.outline_frame,
+            width=50,
+            height=50,
+            fg_color=regedit_change.hex_color2)
         self.fill_frame.grid(row=0, column=0, padx=10, pady=(10, 10))
         self.preview_label = customtkinter.CTkButton(
             self.right_frame,
@@ -73,7 +77,7 @@ class AnyFuncFrame(customtkinter.CTkFrame):
         self.status_text = customtkinter.CTkLabel(self.right_frame,
                                                   text=None,
                                                   anchor="center")
-        self.status_text.grid(row=5, column=0, padx=10, pady=(7, 0))
+        self.status_text.grid(row=5, column=0, padx=10, pady=(5, 0))
         self.button = customtkinter.CTkButton(self.right_frame,
                                               command=self.accept_event,
                                               text="Accept",
@@ -92,14 +96,14 @@ class AnyFuncFrame(customtkinter.CTkFrame):
         """Preview functionality"""
         self.outline_frame = customtkinter.CTkFrame(
             self.right_frame,
-            width=70,
-            height=70,
+            width=60,
+            height=60,
             fg_color=regedit_change.hex_color1)
         self.outline_frame.grid(row=1, column=0, padx=10, pady=(0, 10))
         self.fill_frame = customtkinter.CTkFrame(
             self.outline_frame,
-            width=60,
-            height=60,
+            width=50,
+            height=50,
             fg_color=regedit_change.hex_color2)
         self.fill_frame.grid(row=0, column=0, padx=10, pady=(10, 10))
 
@@ -133,12 +137,18 @@ class RGBSliders(customtkinter.CTkFrame):
         self.sliders_frame.grid(row=0, column=0, padx=10, pady=(10, 10))
         rgb1, rgb2 = regedit_change.get_color()
         self.slider_entries = [
-            (customtkinter.CTkSlider, customtkinter.CTkEntry, "_R", rgb1[0]),
-            (customtkinter.CTkSlider, customtkinter.CTkEntry, "_G", rgb1[1]),
-            (customtkinter.CTkSlider, customtkinter.CTkEntry, "_B", rgb1[2]),
-            (customtkinter.CTkSlider, customtkinter.CTkEntry, "R", rgb2[0]),
-            (customtkinter.CTkSlider, customtkinter.CTkEntry, "G", rgb2[1]),
-            (customtkinter.CTkSlider, customtkinter.CTkEntry, "B", rgb2[2]),
+            (customtkinter.CTkSlider, customtkinter.CTkEntry, "_R", rgb1[0],
+             customtkinter.CTkLabel, "R"),
+            (customtkinter.CTkSlider, customtkinter.CTkEntry, "_G", rgb1[1],
+             customtkinter.CTkLabel, "G"),
+            (customtkinter.CTkSlider, customtkinter.CTkEntry, "_B", rgb1[2],
+             customtkinter.CTkLabel, "B"),
+            (customtkinter.CTkSlider, customtkinter.CTkEntry, "R", rgb2[0],
+             customtkinter.CTkLabel, "R"),
+            (customtkinter.CTkSlider, customtkinter.CTkEntry, "G", rgb2[1],
+             customtkinter.CTkLabel, "G"),
+            (customtkinter.CTkSlider, customtkinter.CTkEntry, "B", rgb2[2],
+             customtkinter.CTkLabel, "B"),
         ]
         self.first_label = customtkinter.CTkLabel(
             self.sliders_frame, text="Outline of the selection")
@@ -146,8 +156,8 @@ class RGBSliders(customtkinter.CTkFrame):
         self.second_label = customtkinter.CTkLabel(self.sliders_frame,
                                                    text="Fill selection")
         self.second_label.grid(row=4, column=0)
-        for row, (slider_cls, entry_cls, text,
-                  slider_value) in enumerate(self.slider_entries, start=1):
+        for row, (slider_cls, entry_cls, text, slider_value, label_cls,
+                  slider_color) in enumerate(self.slider_entries, start=1):
             if row >= 4:
                 row += 1
             entry_var = customtkinter.Variable()
@@ -157,7 +167,9 @@ class RGBSliders(customtkinter.CTkFrame):
                                 command=self.create_slider_event(entry_var),
                                 number_of_steps=255)
             slider.set(int(slider_value))
-            slider.grid(row=row, column=0, padx=20, pady=(10, 10))
+            slider.grid(row=row, column=0, padx=(3, 10), pady=(10, 10))
+            label = label_cls(self.sliders_frame, text=slider_color)
+            label.grid(row=row, column=1, padx=(0, 10))
             entry = entry_cls(self.sliders_frame,
                               placeholder_text=text,
                               width=50,
@@ -169,8 +181,9 @@ class RGBSliders(customtkinter.CTkFrame):
             entry.bind("<FocusOut>",
                        self.create_entry_event(entry_var, slider))
             entry.bind("<Return>", self.create_entry_event(entry_var, slider))
-            entry.grid(row=row, column=1, padx=5, pady=0)
+            entry.grid(row=row, column=2, padx=5, pady=0)
             setattr(self, f"slider_{text}", slider)
+            setattr(self, f"label_{text}", label)
             setattr(self, f"entry_{text}", entry)
 
     def create_slider_event(self, entry_var):

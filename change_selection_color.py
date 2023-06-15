@@ -50,6 +50,7 @@ class RegeditChange:
         self.rgb_color1 = winreg.QueryValueEx(key, 'Hilight')[0]
         self.rgb_color2 = winreg.QueryValueEx(key, 'HotTrackingColor')[0]
         winreg.CloseKey(key)
+        self.rgb_to_hex()
         return self.rgb_color1.split(), self.rgb_color2.split()
 
     def rgb_to_hex(self):
