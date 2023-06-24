@@ -1,6 +1,6 @@
 # Change Selection Color in Windows
 
-![изображение](https://github.com/Hazardooo/Change-selection-color-in-win/assets/112272389/a2473536-e03c-49ff-9d5f-d0ddbdd533ba)
+![изображение](https://github.com/Hazardooo/Change-selection-color-in-win/assets/112272389/ab44bdf2-1c31-43ec-8330-12c247e1cfbc)
 
 This is a Windows application that allows you to change the color of the selection highlight in Windows. With this application, you can customize the appearance of the selection highlight to match your preferences or visual requirements.
 
@@ -33,7 +33,7 @@ This is a Windows application that allows you to change the color of the selecti
 7. Click the "Accept" button to apply the color changes to the Windows selection highlight.
 
 ## Usage example
-![mYKhmsIndq](https://github.com/Hazardooo/Change-selection-color-in-win/assets/112272389/3d9e19d0-8b72-4725-8ce9-4dba89a50a3e)
+![NFbNAeHyvQ](https://github.com/Hazardooo/Change-selection-color-in-win/assets/112272389/b95f5c1a-b3e7-445c-bc22-cd996e37a1e7)
 
 ![oA4iPXUv6u](https://github.com/Hazardooo/Change-selection-color-in-win/assets/112272389/4f54b304-1ba9-43c3-a4c7-553f71937c8f)
 
