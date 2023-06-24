@@ -1,4 +1,5 @@
 import customtkinter
+import tkinter as tk
 from change_selection_color import RegeditChange
 
 regedit_change = RegeditChange()
@@ -15,10 +16,8 @@ class App(customtkinter.CTk):
         self.resizable(False, False)
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
-
         self.slider_frame = RGBSliders(self)
         self.slider_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
-
         self.right_func_frame = AnyFuncFrame(self)
         self.right_func_frame.grid(row=0,
                                    column=0,
@@ -42,26 +41,17 @@ class AnyFuncFrame(customtkinter.CTkFrame):
             variable=self.dark_mode_switch_var,
             onvalue="on",
             offvalue="off")
-        self.dark_mode_switcher.grid(row=0, column=0, padx=10, pady=(5, 5))
-        self.outline_frame = customtkinter.CTkFrame(
-            self.right_frame,
-            width=60,
-            height=60,
-            fg_color=regedit_change.hex_color1)
-        self.outline_frame.grid(row=1, column=0, padx=10, pady=(0, 10))
-        self.fill_frame = customtkinter.CTkFrame(
-            self.outline_frame,
-            width=50,
-            height=50,
-            fg_color=regedit_change.hex_color2)
+        self.dark_mode_switcher.grid(row=0, column=0, padx=10, pady=(10, 20))
+        self.outline_frame = tk.Frame(self.right_frame,
+                                      width=70,
+                                      height=70,
+                                      bg=regedit_change.hex_color1)
+        self.outline_frame.grid(row=1, column=0, padx=10, pady=(0, 20))
+        self.fill_frame = tk.Frame(self.outline_frame,
+                                   width=60,
+                                   height=60,
+                                   bg=regedit_change.hex_color2)
         self.fill_frame.grid(row=0, column=0, padx=10, pady=(10, 10))
-        self.preview_label = customtkinter.CTkButton(
-            self.right_frame,
-            command=self.preview_event,
-            text="Preview",
-            width=100,
-            height=30)
-        self.preview_label.grid(row=2, column=0, padx=10, pady=(0, 10))
         self.status_label = customtkinter.CTkLabel(self.right_frame,
                                                    text="Status",
                                                    anchor="center")
@@ -94,17 +84,9 @@ class AnyFuncFrame(customtkinter.CTkFrame):
 
     def preview_event(self):
         """Preview functionality"""
-        self.outline_frame = customtkinter.CTkFrame(
-            self.right_frame,
-            width=60,
-            height=60,
-            fg_color=regedit_change.hex_color1)
-        self.outline_frame.grid(row=1, column=0, padx=10, pady=(0, 10))
-        self.fill_frame = customtkinter.CTkFrame(
-            self.outline_frame,
-            width=50,
-            height=50,
-            fg_color=regedit_change.hex_color2)
+        self.outline_frame.configure(bg=regedit_change.hex_color1)
+        self.outline_frame.grid(row=1, column=0, padx=10, pady=(0, 20))
+        self.fill_frame.configure(bg=regedit_change.hex_color2)
         self.fill_frame.grid(row=0, column=0, padx=10, pady=(10, 10))
 
     def accept_event(self):
@@ -156,22 +138,24 @@ class RGBSliders(customtkinter.CTkFrame):
         self.second_label = customtkinter.CTkLabel(self.sliders_frame,
                                                    text="Fill selection")
         self.second_label.grid(row=4, column=0)
-        for row, (slider_cls, entry_cls, text, slider_value, label_cls,
-                  slider_color) in enumerate(self.slider_entries, start=1):
+        for row, (slider_cls, entry_cls, slider_separator, slider_value,
+                  label_cls, slider_color) in enumerate(self.slider_entries,
+                                                        start=1):
             if row >= 4:
                 row += 1
             entry_var = customtkinter.Variable()
             slider = slider_cls(self.sliders_frame,
                                 from_=0,
                                 to=255,
-                                command=self.create_slider_event(entry_var),
+                                command=self.create_slider_event(
+                                    entry_var, slider_separator),
                                 number_of_steps=255)
             slider.set(int(slider_value))
             slider.grid(row=row, column=0, padx=(3, 10), pady=(10, 10))
             label = label_cls(self.sliders_frame, text=slider_color)
             label.grid(row=row, column=1, padx=(0, 10))
             entry = entry_cls(self.sliders_frame,
-                              placeholder_text=text,
+                              placeholder_text=slider_separator,
                               width=50,
                               textvariable=entry_var,
                               validate="key",
@@ -182,11 +166,11 @@ class RGBSliders(customtkinter.CTkFrame):
                        self.create_entry_event(entry_var, slider))
             entry.bind("<Return>", self.create_entry_event(entry_var, slider))
             entry.grid(row=row, column=2, padx=5, pady=0)
-            setattr(self, f"slider_{text}", slider)
-            setattr(self, f"label_{text}", label)
-            setattr(self, f"entry_{text}", entry)
+            setattr(self, f"slider_{slider_separator}", slider)
+            setattr(self, f"label_{slider_separator}", label)
+            setattr(self, f"entry_{slider_separator}", entry)
 
-    def create_slider_event(self, entry_var):
+    def create_slider_event(self, entry_var, separator_preview):
         """Creating an event for the slider. 
         Implements feedback with entry widgets and sets the specified values from the slider. 
         Also adds values for the fill of the selection and the outline of the selection"""
@@ -197,6 +181,7 @@ class RGBSliders(customtkinter.CTkFrame):
             color1 = self.get_slider_values()[:3]
             color2 = self.get_slider_values()[3:]
             regedit_change.insert(color1, color2)
+            self.master.right_func_frame.preview_event()
 
         return slider_event
 
@@ -215,6 +200,15 @@ class RGBSliders(customtkinter.CTkFrame):
 
         return entry_event
 
+    def get_slider_values(self):
+        """Getting values from all sliders"""
+        slider_values = []
+        for slider_entry in self.slider_entries:
+            slider = getattr(self, f"slider_{slider_entry[2]}")
+            value = int(slider.get())
+            slider_values.append(str(value))
+        return slider_values
+
     @staticmethod
     def validate_entry(value):
         """Checking and restricting entry widgets. 
@@ -226,12 +220,3 @@ class RGBSliders(customtkinter.CTkFrame):
             return 0 <= int_value <= 255
         except ValueError:
             return False
-
-    def get_slider_values(self):
-        """Getting values from all sliders"""
-        slider_values = []
-        for slider_entry in self.slider_entries:
-            slider = getattr(self, f"slider_{slider_entry[2]}")
-            value = int(slider.get())
-            slider_values.append(str(value))
-        return slider_values
