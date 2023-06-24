@@ -14,20 +14,6 @@ class RegeditChange:
         self.rgb_color1, self.rgb_color2 = ' '.join(color1), ' '.join(color2)
         self.rgb_to_hex()
 
-    @staticmethod
-    def check_color(color):
-        """Checking our RGB values"""
-        if color == None:
-            return False
-        color_split = color.split()
-        if len(color_split) != 3:
-            return False
-        try:
-            values = [int(c) for c in color_split]
-            return all(0 <= v <= 255 for v in values)
-        except ValueError:
-            return False
-
     def accept_color(self):
         """We accept our RGB values and enter them in the registry"""
         if self.check_color(self.rgb_color1) and self.check_color(
@@ -50,6 +36,7 @@ class RegeditChange:
         self.rgb_color1 = winreg.QueryValueEx(key, 'Hilight')[0]
         self.rgb_color2 = winreg.QueryValueEx(key, 'HotTrackingColor')[0]
         winreg.CloseKey(key)
+        self.rgb_to_hex()
         return self.rgb_color1.split(), self.rgb_color2.split()
 
     def rgb_to_hex(self):
@@ -62,3 +49,17 @@ class RegeditChange:
         self.hex_color2 = "#{:02x}{:02x}{:02x}".format(int(split_colors2[0]),
                                                        int(split_colors2[1]),
                                                        int(split_colors2[2]))
+
+    @staticmethod
+    def check_color(color):
+        """Checking our RGB values"""
+        if color == None:
+            return False
+        color_split = color.split()
+        if len(color_split) != 3:
+            return False
+        try:
+            values = [int(c) for c in color_split]
+            return all(0 <= v <= 255 for v in values)
+        except ValueError:
+            return False
