@@ -10,7 +10,7 @@ class App(customtkinter.CTk):
 
     def __init__(self):
         super().__init__()
-
+        customtkinter.deactivate_automatic_dpi_awareness()
         self.geometry("500x310")
         self.title("Change selection")
         self.resizable(False, False)
