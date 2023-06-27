@@ -1,4 +1,4 @@
-# Change Selection Color in Windows
+# Windows-Selection-Color-Changer
 
 ![изображение](https://github.com/Hazardooo/Change-selection-color-in-win/assets/112272389/ab44bdf2-1c31-43ec-8330-12c247e1cfbc)
 
