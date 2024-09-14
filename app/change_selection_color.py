@@ -60,9 +60,9 @@ class RegeditChange:
             light_theme, _ = winreg.QueryValueEx(reg_key, "AppsUseLightTheme")
             winreg.CloseKey(reg_key)
             if light_theme == 0:
-                return "on"
+                return True
             else:
-                return "off"
+                return False
         except Exception as e:
             return f"Ошибка при чтении реестра: {e}"
 

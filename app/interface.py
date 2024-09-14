@@ -32,14 +32,14 @@ class AnyFuncFrame(customtkinter.CTkFrame):
         super().__init__(master)
         self.right_frame = customtkinter.CTkFrame(self, width=125, height=273)
         self.right_frame.grid(row=0, column=0, padx=10, pady=(10, 10))
-        self.dark_mode_switch_var = customtkinter.StringVar(value=RegeditChange.check_system_theme())
+        self.dark_mode_switch_var = customtkinter.BooleanVar(value=RegeditChange.check_system_theme())
         self.dark_mode_switcher = customtkinter.CTkSwitch(
             self.right_frame,
             command=self.dark_mode,
             text="Dark mode",
             variable=self.dark_mode_switch_var,
-            onvalue="on",
-            offvalue="off")
+            onvalue=True,
+            offvalue=False)
         self.dark_mode_switcher.grid(row=0, column=0, padx=10, pady=(10, 20))
         self.outline_frame = tk.Frame(self.right_frame,
                                       width=70,
@@ -76,7 +76,7 @@ class AnyFuncFrame(customtkinter.CTkFrame):
 
     def dark_mode(self):
         """Function to switch between light and dark mode"""
-        if self.dark_mode_switch_var.get() == "on":
+        if self.dark_mode_switch_var.get():
             customtkinter.set_appearance_mode("dark")
         else:
             customtkinter.set_appearance_mode("light")
