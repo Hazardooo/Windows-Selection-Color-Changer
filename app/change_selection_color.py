@@ -1,4 +1,6 @@
 import winreg
+import ctypes
+from ctypes import wintypes
 
 
 class RegeditChange:
@@ -49,6 +51,20 @@ class RegeditChange:
         self.hex_color2 = "#{:02x}{:02x}{:02x}".format(int(split_colors2[0]),
                                                        int(split_colors2[1]),
                                                        int(split_colors2[2]))
+
+    @staticmethod
+    def check_system_theme():
+        registry_path = r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
+        try:
+            reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, registry_path)
+            light_theme, _ = winreg.QueryValueEx(reg_key, "AppsUseLightTheme")
+            winreg.CloseKey(reg_key)
+            if light_theme == 0:
+                return "on"
+            else:
+                return "off"
+        except Exception as e:
+            return f"Ошибка при чтении реестра: {e}"
 
     @staticmethod
     def check_color(color):

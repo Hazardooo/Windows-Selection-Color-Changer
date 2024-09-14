@@ -1,7 +1,6 @@
 import customtkinter
 import tkinter as tk
 from change_selection_color import RegeditChange
-
 regedit_change = RegeditChange()
 
 
@@ -33,7 +32,7 @@ class AnyFuncFrame(customtkinter.CTkFrame):
         super().__init__(master)
         self.right_frame = customtkinter.CTkFrame(self, width=125, height=273)
         self.right_frame.grid(row=0, column=0, padx=10, pady=(10, 10))
-        self.dark_mode_switch_var = customtkinter.StringVar(value="off")
+        self.dark_mode_switch_var = customtkinter.StringVar(value=RegeditChange.check_system_theme())
         self.dark_mode_switcher = customtkinter.CTkSwitch(
             self.right_frame,
             command=self.dark_mode,
