@@ -28,9 +28,9 @@ This is a Windows application that allows you to change the color of the selecti
 2. Just open and use without installation
 3. The application window will appear, allowing you to adjust the color of the selection highlight.
 4. Use the RGB sliders or input fields to specify the color values. 
-5. To preview, click on the preview button.
-6. Toggle the dark mode switch to enable or disable the dark mode appearance.
-7. Click the "Accept" button to apply the color changes to the Windows selection highlight.
+5. Toggle the dark mode switch to enable or disable the dark mode appearance.
+6. Click the "Accept" button to apply the color changes to the Windows selection highlight.
+7. In order for the changes to apply, you need to restart your PC
 
 ## Usage example
 ![NFbNAeHyvQ](https://github.com/Hazardooo/Change-selection-color-in-win/assets/112272389/b95f5c1a-b3e7-445c-bc22-cd996e37a1e7)
