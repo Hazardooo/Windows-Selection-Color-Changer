@@ -1,9 +1,11 @@
 name: Python application (Windows Build)
+
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main", "master" ] # Слушаем обе на всякий случай
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main", "master" ]
+
 permissions:
   contents: write
 
@@ -12,34 +14,37 @@ jobs:
     runs-on: windows-latest
     env:
       APP_NAME: change-selection-color
-      PYTHON_VERSION: "3.14"
+      PYTHON_VERSION: "3.12" # Используем стабильную версию
       ICON_PATH: app/src/icon.ico
       RELEASE_NAME: "Release v0.0.0"
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5 # Обновил до v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: Build
+          cache: 'pip' # Ускоряет повторные запуски
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller pyaudiodevice
+          # Если есть requirements.txt, раскомментируй строку ниже:
+          # pip install -r requirements.txt
+
+      - name: Build with PyInstaller
         run: |
           pyinstaller app/main.py --onefile --name "${{ env.APP_NAME }}" --icon "${{ env.ICON_PATH }}" --collect-all pyaudiodevice
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' # Создавать релиз только при пуше в мастер
         with:
           tag_name: v0.0.0
-          release_name: ${{ env.RELEASE_NAME }}
+          name: ${{ env.RELEASE_NAME }}
           draft: true
-          prerelease: false
-      - name: Upload to Release
-        uses: actions/upload-release-asset@v1
+          files: dist/${{ env.APP_NAME }}.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/${{ env.APP_NAME }}.exe
-          asset_name: ${{ env.APP_NAME }}.exe
-          asset_content_type: application/octet-stream
