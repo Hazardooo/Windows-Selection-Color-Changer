@@ -17,7 +17,7 @@ class AppConstants:
     MAX_RGB = 255
     RGB_COMPONENTS = 3
 
-    ICON_FILE = "icon.ico"
+    ICON_FILE = "src/icon.ico"
 
 
 class StatusMessages(Enum):
