@@ -1,5 +1,10 @@
 from interface import App
 
+
+def main():
+    app = App()
+    app.mainloop()
+
+
 if __name__ == '__main__':
-    change_selection = App()
-    change_selection.mainloop()
+    main()
