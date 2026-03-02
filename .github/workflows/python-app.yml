@@ -35,7 +35,7 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          pyinstaller app/main.py --onefile --name "${{ env.APP_NAME }}" --icon "${{ env.ICON_PATH }}"
+          pyinstaller app/main.py --onefile --noconsole --name "${{ env.APP_NAME }}" --icon "${{ env.ICON_PATH }}" --collect-all pyaudiodevice
 
       - name: Release
         uses: softprops/action-gh-release@v2
