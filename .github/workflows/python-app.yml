@@ -31,10 +31,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pyinstaller
 
       - name: Build with PyInstaller
         run: |
-          pyinstaller app/main.py --onefile --noconsole --name "${{ env.APP_NAME }}" --icon "${{ env.ICON_PATH }}" --collect-all pyaudiodevice
+          pyinstaller app/main.py --onefile --noconsole --name "${{ env.APP_NAME }}" --icon "${{ env.ICON_PATH }}"
 
       - name: Release
         uses: softprops/action-gh-release@v2
